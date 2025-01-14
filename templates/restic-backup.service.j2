@@ -21,6 +21,10 @@ Environment="AWS_SECRET_ACCESS_KEY={{ restic_aws_secret_access_key}}"
 
 ExecStartPre=/bin/sh -c '{{ restic_path }} snapshots || {{ restic_path }} init'
 
+{% if restic_on_start %}
+ExecStartPre={{ restic_on_start }}
+{% endif -%}
+
 {% if restic_check %}
 ExecStartPre={{ restic_path }} check
 {% endif -%}
@@ -39,4 +43,12 @@ ExecStartPost={{ restic_path }} forget --keep-within {{ restic_forget_keep_withi
 
 {% if restic_prune %}
 ExecStartPost={{ restic_path }} prune
+{% endif -%}
+
+{% if restic_on_success %}
+ExecStartPost={{ restic_on_success }}
+{% endif -%}
+
+{% if restic_on_failure %}
+ExecStopPost=sh -c 'if [ $EXIT_STATUS != 0 ]; then {{ restic_on_failure }}; fi'
 {% endif -%}

@@ -66,22 +66,31 @@ See the [systemd.timer](https://www.freedesktop.org/software/systemd/man/systemd
 
 You can see the logs of the backup with `journalctl`. (`journalctl -xefu restic-backup`).
 
+### Hooks
+
+You can define commands that will be executed after the backup, for example to get notified about a failed backup.
+
+The following hooks are available:
+
+- `restic_on_start`: command to run before the backup starts.
+- `restic_on_success`: command to run after a successful backup.
+- `restic_on_failure`: command to run after a failed backup.
+
 ## Example playbook
 
 ```yaml
 ---
-
 - hosts: myhost
   roles: restic
   vars:
     restic_ssh_user: backupuser
     restic_ssh_hostname: storage-server.infra.tld
     restic_folders:
-      - {path: "/srv"}
-      - {path: "/var/www"}
+      - { path: "/srv" }
+      - { path: "/var/www" }
     restic_databases:
-    - {name: website, dump_command: sudo -Hiu postgres pg_dump -Fc website}
-    - {name: website2, dump_command: mysqldump website2}
+      - { name: website, dump_command: sudo -Hiu postgres pg_dump -Fc website }
+      - { name: website2, dump_command: mysqldump website2 }
     restic_password: mysuperduperpassword
     restic_ssh_private_key: |-
       -----BEGIN OPENSSH PRIVATE KEY-----
@@ -97,7 +106,6 @@ S3 example:
 
 ```yaml
 ---
-
 - hosts: myhost
   roles: restic
   vars:
@@ -106,11 +114,11 @@ S3 example:
     restic_aws_access_key_id: xxxxx
     restic_aws_secret_access_key: xxxxx
     restic_folders:
-      - {path: "/srv"}
-      - {path: "/var/www"}
+      - { path: "/srv" }
+      - { path: "/var/www" }
     restic_databases:
-    - {name: website, dump_command: sudo -Hiu postgres pg_dump -Fc website}
-    - {name: website2, dump_command: mysqldump website2}
+      - { name: website, dump_command: sudo -Hiu postgres pg_dump -Fc website }
+      - { name: website2, dump_command: mysqldump website2 }
     restic_password: mysuperduperpassword
 ```
 
